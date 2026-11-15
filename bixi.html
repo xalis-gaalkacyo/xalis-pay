@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XALIS — Bixi</title>
+<style>
+ body{margin:0;background:#0b0f0c;color:#fff;font-family:sans-serif;display:flex;justify-content:center}
+ .box{max-width:420px;width:100%;padding:20px;box-sizing:border-box}
+ .brand{text-align:center;font-weight:700;color:#7ee2a0;margin-bottom:12px}
+ img{width:100%;border-radius:16px;display:none}
+ h2{margin:14px 0 4px;font-size:22px}
+ .tot{opacity:.85}
+ .btn{display:block;text-align:center;background:#22c55e;color:#04150a;font-weight:800;font-size:20px;padding:16px;border-radius:14px;margin-top:18px;text-decoration:none}
+ .note{opacity:.75;font-size:14px;margin-top:10px;text-align:center}
+ .err{padding:24px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="box" id="box" style="display:none">
+ <div class="brand">XALIS — Checkout</div>
+ <img id="img" alt="">
+ <h2 id="name"></h2>
+ <div class="tot" id="tot"></div>
+ <a class="btn" id="btn" href="#">Bixi</a>
+ <div class="note">Dialer-ka ayaa furmaya — OK taabo, kadib PIN-kaaga SAHAL geli.</div>
+</div>
+<div class="err" id="err" style="display:none">Link-gu waa khaldan yahay.</div>
+<script>
+ var q = new URLSearchParams(location.search);
+ var amt = (q.get('bixi') || '').replace(/[^0-9.]/g, '');
+ if (!amt) { document.getElementById('err').style.display = 'block'; }
+ else {
+   if (amt.indexOf('.') >= 0) { amt = amt.replace(/0+$/, '').replace(/\.$/, ''); }
+   var magac = q.get('magac') || 'Alaabta XALIS';
+   var sawir = q.get('sawir') || '';
+   document.getElementById('name').textContent = magac;
+   document.getElementById('tot').textContent = 'Wadarta: $' + amt;
+   var btn = document.getElementById('btn');
+   btn.textContent = 'Bixi SAHAL — $' + amt;
+   btn.href = 'intent:*883*7643549*' + amt + '%23#Intent;scheme=tel;action=android.intent.action.DIAL;end';
+   if (sawir) { var im = document.getElementById('img'); im.src = sawir; im.style.display = 'block'; im.onerror = function(){ im.style.display = 'none'; }; }
+   document.getElementById('box').style.display = 'block';
+ }
+</script>
+</body>
+</html>
