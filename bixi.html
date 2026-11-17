@@ -3,44 +3,155 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>XALIS — Bixi</title>
+<title>XALIS — Checkout</title>
 <style>
- body{margin:0;background:#0b0f0c;color:#fff;font-family:sans-serif;display:flex;justify-content:center}
- .box{max-width:420px;width:100%;padding:20px;box-sizing:border-box}
- .brand{text-align:center;font-weight:700;color:#7ee2a0;margin-bottom:12px}
- img{width:100%;border-radius:16px;display:none}
- h2{margin:14px 0 4px;font-size:22px}
- .tot{opacity:.85}
- .btn{display:block;text-align:center;background:#22c55e;color:#04150a;font-weight:800;font-size:20px;padding:16px;border-radius:14px;margin-top:18px;text-decoration:none}
- .note{opacity:.75;font-size:14px;margin-top:10px;text-align:center}
- .err{padding:24px;font-size:16px}
+ *{box-sizing:border-box}
+ body{margin:0;min-height:100vh;background:linear-gradient(160deg,#07130c 0%,#0b2013 55%,#07130c 100%);color:#fff;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;padding:18px 14px 30px}
+ .wrap{max-width:430px;width:100%}
+ .brand{text-align:center;font-weight:800;letter-spacing:2px;color:#7ee2a0;font-size:15px;margin:4px 0 14px}
+ .status{border-radius:16px;padding:16px;text-align:center;font-weight:800;font-size:19px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)}
+ .status small{display:block;font-weight:600;font-size:13px;opacity:.85;margin-top:4px}
+ .st-ready{background:rgba(255,255,255,.06);color:#e5e7eb}
+ .st-wait{background:linear-gradient(135deg,#7f1d1d,#991b1b);color:#fff;animation:pulse 1.6s infinite}
+ .st-paid{background:linear-gradient(135deg,#15803d,#16a34a);color:#fff}
+ @keyframes pulse{0%,100%{opacity:1}50%{opacity:.72}}
+ .card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:18px;backdrop-filter:blur(6px)}
+ img.pimg{width:100%;border-radius:14px;display:none;margin-bottom:12px}
+ h2{margin:2px 0 6px;font-size:21px;line-height:1.25}
+ .oid{display:inline-block;background:rgba(126,226,160,.15);color:#7ee2a0;border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700;margin-bottom:8px}
+ .tot{font-size:30px;font-weight:900;margin:6px 0 2px}
+ .tot span{font-size:14px;font-weight:600;opacity:.7}
+ .methods{display:flex;gap:8px;margin:16px 0 4px;flex-wrap:wrap}
+ .m{flex:1;min-width:70px;text-align:center;padding:9px 4px;border-radius:12px;font-weight:800;font-size:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+ .m.on{background:#22c55e;color:#04150a;border-color:#22c55e}
+ .m.soon{opacity:.45;font-weight:600}
+ .m.soon small{display:block;font-size:10px;font-weight:600}
+ .btn{display:block;text-align:center;background:#22c55e;color:#04150a;font-weight:900;font-size:20px;padding:16px;border-radius:14px;margin-top:16px;text-decoration:none;border:none;width:100%;cursor:pointer}
+ .btn:active{transform:scale(.98)}
+ .codebox{display:none;margin-top:16px;background:#000;border:1px dashed #7ee2a0;border-radius:14px;padding:16px;text-align:center;font-size:24px;font-weight:900;letter-spacing:1px;color:#7ee2a0}
+ .note{opacity:.75;font-size:13.5px;margin-top:10px;text-align:center;line-height:1.45}
+ hr{border:none;border-top:1px solid rgba(255,255,255,.1);margin:20px 0}
+ .tlabel{font-weight:800;font-size:15px;margin-bottom:8px}
+ .trow{display:flex;gap:8px}
+ input{flex:1;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.22);border-radius:12px;color:#fff;font-size:17px;padding:13px;min-width:0}
+ input:focus{outline:2px solid #22c55e}
+ .sbtn{background:#eab308;color:#1a1200;font-weight:900;font-size:16px;border:none;border-radius:12px;padding:13px 18px;cursor:pointer}
+ .sbtn:active{transform:scale(.97)}
+ .msg{font-size:13.5px;margin-top:9px;min-height:18px;text-align:center}
+ .err{padding:26px;font-size:16px;text-align:center}
 </style>
 </head>
 <body>
-<div class="box" id="box" style="display:none">
- <div class="brand">XALIS — Checkout</div>
- <img id="img" alt="">
- <h2 id="name"></h2>
- <div class="tot" id="tot"></div>
- <a class="btn" id="btn" href="#">Bixi</a>
- <div class="note">Dialer-ka ayaa furmaya — OK taabo, kadib PIN-kaaga SAHAL geli.</div>
+<div class="wrap" id="box" style="display:none">
+ <div class="brand">XALIS — CHECKOUT</div>
+
+ <div class="status st-ready" id="status">Dalabkaagu waa diyaar<small>Bixi, kadibna Tixraaca geli si laguu xaqiijiyo</small></div>
+
+ <div class="card">
+  <img class="pimg" id="img" alt="">
+  <div class="oid" id="oid" style="display:none"></div>
+  <h2 id="name"></h2>
+  <div class="tot"><span>Wadarta:</span> $<span id="tot"></span></div>
+
+  <div class="methods">
+   <div class="m on">SAHAL</div>
+   <div class="m soon">EVC<small>dhowaan</small></div>
+   <div class="m soon">eDahab<small>dhowaan</small></div>
+   <div class="m soon">SAAD<small>dhowaan</small></div>
+  </div>
+
+  <a class="btn" id="btn" href="#">Bixi SAHAL</a>
+  <div class="codebox" id="codebox"></div>
+  <div class="note" id="paynote">Dialer-ka ayaa furmaya — OK taabo, kadib PIN-kaaga SAHAL geli.</div>
+
+  <div id="tixsec" style="display:none">
+   <hr>
+   <div class="tlabel">Tixraaca lacagta aad bixisay geli:</div>
+   <div class="trow">
+    <input id="tix" inputmode="numeric" autocomplete="off" placeholder="Tixraac: 7574461671">
+    <button class="sbtn" id="send">Dir</button>
+   </div>
+   <div class="msg" id="msg"></div>
+   <div class="note">Tixraacu waa lambarka kuugu soo baxa SMS-ka SAHAL ee lacagtu ku baxday.</div>
+  </div>
+ </div>
 </div>
 <div class="err" id="err" style="display:none">Link-gu waa khaldan yahay.</div>
+
 <script>
+ var API = 'https://script.google.com/macros/s/AKfycbxBDKTBZsWt5GNR563Q6SgLSojsiCUYsIN_Lh0G1ZbPgp3Lx1EF1mszvR6DcaUI9zU0bg/exec';
+ var TOKEN = 'xalis-store-7741';
  var q = new URLSearchParams(location.search);
  var amt = (q.get('bixi') || '').replace(/[^0-9.]/g, '');
+ var dalab = (q.get('dalab') || '').trim();
+ var poller = null;
+
+ function setStatus(kind, main, sub) {
+   var s = document.getElementById('status');
+   s.className = 'status ' + kind;
+   s.innerHTML = main + (sub ? '<small>' + sub + '</small>' : '');
+ }
+ function api(params) {
+   var u = API + '?token=' + TOKEN + '&' + params;
+   return fetch(u).then(function(r){ return r.json(); });
+ }
+ function checkStatus() {
+   if (!dalab) return;
+   api('action=status&dalab=' + encodeURIComponent(dalab)).then(function(d) {
+     if (!d || !d.ok) return;
+     if (d.status === 'paid') {
+       setStatus('st-paid', 'PAID ✓', 'Lacagta waa la xaqiijiyay — mahadsanid! Dalabkaaga waa la diyaarinayaa.');
+       if (poller) { clearInterval(poller); poller = null; }
+     } else if (d.status === 'waiting') {
+       setStatus('st-wait', 'WAITING...', 'Sugaya xaqiijin — lacagtaada waa la hubinayaa');
+       if (!poller) poller = setInterval(checkStatus, 8000);
+     }
+   }).catch(function(){});
+ }
+
  if (!amt) { document.getElementById('err').style.display = 'block'; }
  else {
    if (amt.indexOf('.') >= 0) { amt = amt.replace(/0+$/, '').replace(/\.$/, ''); }
    var magac = q.get('magac') || 'Alaabta XALIS';
    var sawir = q.get('sawir') || '';
    document.getElementById('name').textContent = magac;
-   document.getElementById('tot').textContent = 'Wadarta: $' + amt;
+   document.getElementById('tot').textContent = amt;
+   if (dalab) { var o = document.getElementById('oid'); o.textContent = 'Order: ' + dalab; o.style.display = 'inline-block'; }
    var btn = document.getElementById('btn');
    btn.textContent = 'Bixi SAHAL — $' + amt;
-   btn.href = 'intent:*883*7643549*' + amt + '%23#Intent;scheme=tel;action=android.intent.action.DIAL;end';
+   var code = '*883*7643549*' + amt + '#';
+   var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+   if (isIOS) {
+     btn.style.display = 'none';
+     var cb = document.getElementById('codebox');
+     cb.textContent = code; cb.style.display = 'block';
+     document.getElementById('paynote').textContent = 'Code-kan gacantaada ku qor dialer-ka telefoonkaaga, kadib PIN-kaaga geli. Markaad bixiso, Tixraaca hoos geli.';
+   } else {
+     btn.href = 'intent:' + code.replace('#', '%23') + '#Intent;scheme=tel;action=android.intent.action.DIAL;end';
+   }
    if (sawir) { var im = document.getElementById('img'); im.src = sawir; im.style.display = 'block'; im.onerror = function(){ im.style.display = 'none'; }; }
    document.getElementById('box').style.display = 'block';
+
+   if (dalab) {
+     document.getElementById('tixsec').style.display = 'block';
+     checkStatus();
+     document.getElementById('send').addEventListener('click', function() {
+       var tix = document.getElementById('tix').value.replace(/\D/g, '');
+       var msg = document.getElementById('msg');
+       if (tix.length < 6) { msg.textContent = 'Tixraacu waa gaaban yahay — SMS-ka SAHAL ka fiiri.'; msg.style.color = '#fca5a5'; return; }
+       msg.textContent = 'Waa la dirayaa...'; msg.style.color = '#e5e7eb';
+       api('action=tixraac&dalab=' + encodeURIComponent(dalab) + '&tix=' + tix +
+           '&wadarta=' + encodeURIComponent(amt) + '&magac=' + encodeURIComponent(magac))
+       .then(function(d) {
+         if (d && d.ok) {
+           msg.textContent = 'Tixraaca waa la gudbiyay.'; msg.style.color = '#7ee2a0';
+           setStatus('st-wait', 'WAITING...', 'Sugaya xaqiijin — lacagtaada waa la hubinayaa');
+           if (!poller) poller = setInterval(checkStatus, 8000);
+           checkStatus();
+         } else { msg.textContent = 'Diristu way fashilantay — mar kale isku day.'; msg.style.color = '#fca5a5'; }
+       }).catch(function(){ msg.textContent = 'Diristu way fashilantay — mar kale isku day.'; msg.style.color = '#fca5a5'; });
+     });
+   }
  }
 </script>
 </body>
