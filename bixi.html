@@ -15,25 +15,30 @@
  .st-wait{background:#8f1d22;color:#fff;animation:pulse 1.6s infinite}
  .st-paid{background:#16a34a;color:#fff}
  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.75}}
- .body{flex:1;display:flex;flex-direction:column;gap:13px;padding:14px 0 10px;min-height:0}
- .prod{display:flex;gap:12px;align-items:center;background:#10281a;border:1px solid #1d3a28;border-radius:16px;padding:10px}
- .prod img{width:72px;height:72px;object-fit:cover;border-radius:11px;cursor:zoom-in;flex:none}
+ .body{flex:1;display:flex;flex-direction:column;gap:19px;padding:20px 0 12px;min-height:0}
+ .prod{display:flex;gap:14px;align-items:center;background:#10281a;border:1px solid #1d3a28;border-radius:16px;padding:12px}
+ .prod img{width:94px;height:94px;object-fit:cover;border-radius:12px;cursor:zoom-in;flex:none}
  .prod .nm{font-size:18px;font-weight:700;line-height:1.25}
  .oid{display:inline-block;background:#14532d;color:#7ee2a8;border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:700;margin-top:6px}
  .amount{text-align:center}
- .amount .lb{color:#9db8a8;font-size:13.5px}
+ .amount .alb{color:#9db8a8;font-size:13.5px}
  .amount .vl{font-size:46px;font-weight:800;line-height:1.05}
- .methods{display:flex;gap:8px}
- .m{flex:1;text-align:center;padding:11px 2px;border-radius:12px;background:#12291b;border:1.5px solid #234433;color:#cfe3d6;font-weight:700;font-size:15px;cursor:pointer;user-select:none}
+ .methods{display:flex;gap:10px}
+ .m{flex:1;text-align:center;padding:13px 2px;border-radius:12px;background:#12291b;border:1.5px solid #234433;color:#cfe3d6;font-weight:700;font-size:15px;cursor:pointer;user-select:none}
  .m small{display:block;font-weight:400;font-size:11px;color:#7d968a;margin-top:2px}
  .m.on{background:#1faa4e;border-color:#1faa4e;color:#fff}
  .m.on small{color:#d9f5e3}
  .m.off{opacity:.45;cursor:default}
- .pay{display:block;text-decoration:none;background:#1faa4e;border-radius:16px;padding:14px 12px 12px;text-align:center;color:#fff;cursor:pointer}
+ .pay{display:block;text-decoration:none;background:#1faa4e;border-radius:16px;padding:17px 12px 15px;text-align:center;color:#fff;cursor:pointer}
  .pay:active{transform:scale(.99)}
  .pay .l1{font-size:24px;font-weight:800;letter-spacing:.3px}
  .pay .l2{font-size:18px;font-weight:700;margin-top:2px}
  .pay .l3{font-size:15px;font-family:Consolas,monospace;opacity:.85;margin-top:4px;letter-spacing:.5px}
+ .pay .l3{margin-top:6px}
+ .ussdrow{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
+ .ussdrow .code{font-size:15px;font-family:Consolas,monospace;opacity:.85;letter-spacing:.5px}
+ .copybtn{background:#fff;color:#128c3e;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;flex:none}
+ .copybtn:active{transform:scale(.95)}
  .tix label{font-size:15.5px;font-weight:600;display:block;margin-bottom:8px}
  .trow{display:flex;gap:9px}
  input{flex:1;background:#0e2417;border:1.5px solid #27513a;border-radius:12px;color:#fff;font-size:16.5px;padding:12px 13px;min-width:0}
@@ -48,9 +53,9 @@
  .lb .x{position:absolute;top:14px;right:20px;color:#fff;font-size:34px;font-weight:300;line-height:1}
  @media (max-height:720px){
    .amount .vl{font-size:38px}
-   .prod img{width:58px;height:58px}
+   .prod img{width:74px;height:74px}
    .pay .l1{font-size:21px}
-   .body{gap:10px;padding-top:10px}
+   .body{gap:12px;padding-top:12px}
  }
 </style>
 </head>
@@ -63,7 +68,7 @@
    <div><div class="nm" id="name"></div><span class="oid" id="oid" style="display:none"></span></div>
   </div>
 
-  <div class="amount"><div class="lb">Wadarta</div><div class="vl">$<span id="tot"></span></div></div>
+  <div class="amount"><div class="alb">Wadarta</div><div class="vl">$<span id="tot"></span></div></div>
 
   <div class="methods" id="methods">
    <div class="m on" data-m="SAHAL">SAHAL</div>
@@ -72,11 +77,11 @@
    <div class="m off">SAAD<small>dhowaan</small></div>
   </div>
 
-  <a class="pay" id="btn" href="#">
+  <div class="pay" id="btn">
    <div class="l1" id="pl1"></div>
    <div class="l2" id="pl2"></div>
-   <div class="l3" id="pl3"></div>
-  </a>
+   <div class="ussdrow"><span class="code" id="pl3"></span><button class="copybtn" id="copybtn" type="button"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span id="copytxt">Copy</span></button></div>
+  </div>
 
   <div class="tix" id="tixsec" style="display:none">
    <label>Tixraaca lacagta aad bixisay geli:</label>
@@ -109,15 +114,31 @@
  var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
  function ussd(m) { return METHODS[m].pre + METHODS[m].num + '*' + amt + '#'; }
+ var intentUrl = '';
  function renderMethod() {
    document.getElementById('pl1').textContent = curMethod + ' · ' + METHODS[curMethod].num;
    document.getElementById('pl2').textContent = 'Bixi $' + amt;
    document.getElementById('pl3').textContent = ussd(curMethod);
-   var btn = document.getElementById('btn');
-   if (isIOS) { btn.removeAttribute('href'); }
-   else { btn.href = 'intent:' + ussd(curMethod).replace('#', '%23') + '#Intent;scheme=tel;action=android.intent.action.DIAL;end'; }
+   intentUrl = isIOS ? '' : 'intent:' + ussd(curMethod).replace('#', '%23') + '#Intent;scheme=tel;action=android.intent.action.DIAL;end';
    var ms = document.querySelectorAll('#methods .m[data-m]');
    for (var i = 0; i < ms.length; i++) ms[i].classList.toggle('on', ms[i].getAttribute('data-m') === curMethod);
+ }
+ function doCopy(txt) {
+   function done() {
+     var ct = document.getElementById('copytxt');
+     ct.textContent = 'Waa la koobiyeeyay';
+     setTimeout(function(){ ct.textContent = 'Copy'; }, 2000);
+   }
+   if (navigator.clipboard && navigator.clipboard.writeText) {
+     navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
+   } else { fallback(); }
+   function fallback() {
+     var ta = document.createElement('textarea');
+     ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+     document.body.appendChild(ta); ta.select();
+     try { document.execCommand('copy'); done(); } catch (e) {}
+     document.body.removeChild(ta);
+   }
  }
  function setStatus(kind, main, sub) {
    var s = document.getElementById('status');
@@ -155,7 +176,8 @@
    for (var i = 0; i < ms.length; i++) {
      ms[i].addEventListener('click', function() { curMethod = this.getAttribute('data-m'); renderMethod(); });
    }
-   if (isIOS) { document.getElementById('btn').addEventListener('click', function(e){ e.preventDefault(); }); }
+   document.getElementById('btn').addEventListener('click', function() { if (intentUrl) location.href = intentUrl; });
+   document.getElementById('copybtn').addEventListener('click', function(e) { e.stopPropagation(); doCopy(ussd(curMethod)); });
    if (sawir) {
      var im = document.getElementById('img');
      im.src = sawir; im.style.display = 'block';
