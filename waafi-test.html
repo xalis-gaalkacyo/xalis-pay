@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>XALIS — WaafiPay Tijaabo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a1f14; color: #fff; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+  .banner { margin: 12px 12px 0; padding: 13px 12px; border-radius: 14px; text-align: center; background: rgba(255,255,255,.07); }
+  .banner .t { font-weight: 800; font-size: 19px; }
+  .banner .s { font-size: 13px; opacity: .85; margin-top: 2px; }
+  .banner.waiting { background: #7f1d1d; animation: pulse 1.2s infinite; }
+  .banner.paid { background: #15803d; }
+  .banner.failed { background: #7f1d1d; }
+  @keyframes pulse { 50% { opacity: .72; } }
+  .body { flex: 1; display: flex; flex-direction: column; gap: 19px; padding: 16px 14px 10px; }
+  .prod { display: flex; gap: 13px; align-items: center; background: #10281a; border: 1px solid #1d3a28; border-radius: 16px; padding: 11px; }
+  .prod img { width: 94px; height: 94px; object-fit: cover; border-radius: 11px; cursor: pointer; }
+  .prod .nm { font-size: 17.5px; font-weight: 700; }
+  .oid { display: inline-block; background: #14532d; color: #7ee2a8; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; margin-top: 5px; }
+  .amount { text-align: center; }
+  .amount .alb { color: #9db8a8; font-size: 13px; }
+  .amount .a2 { font-size: 42px; font-weight: 800; line-height: 1.05; }
+  .wlabel { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+  .wrow { display: flex; border: 1.5px solid #2b6cb0; border-radius: 13px; overflow: hidden; background: #0e2417; }
+  .wrow .pfx { padding: 14px 14px; font-size: 17px; font-weight: 800; background: rgba(255,255,255,.06); border-right: 1px solid #234433; }
+  .wrow input { flex: 1; background: transparent; border: 0; outline: 0; color: #fff; font-size: 17px; padding: 14px 12px; letter-spacing: 1px; min-width: 0; }
+  .wrow input::placeholder { color: #5f7a6a; }
+  .paybtn { background: #2563eb; border: 0; border-radius: 15px; color: #fff; padding: 17px 12px; font-size: 19px; font-weight: 800; cursor: pointer; width: 100%; }
+  .paybtn:disabled { opacity: .55; cursor: default; }
+  .msg { text-align: center; font-size: 14px; color: #9db8a8; min-height: 20px; line-height: 1.45; }
+  .msg.err { color: #fca5a5; }
+  .foot { text-align: center; color: #5f7a6a; font-size: 12px; padding: 8px 0 12px; }
+  .lb { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: none; align-items: center; justify-content: center; z-index: 9; }
+  .lb.open { display: flex; }
+  .lb img { max-width: 92vw; max-height: 86vh; border-radius: 14px; }
+  @media (max-height: 720px) { .prod img { width: 74px; height: 74px; } .amount .a2 { font-size: 34px; } .body { gap: 13px; } }
+</style>
+</head>
+<body>
+  <div class="banner" id="banner"><div class="t" id="bt">Dalabkaagu waa diyaar</div><div class="s" id="bs">Geli lambarkaaga wallet-ka, kadib BIXI taabo</div></div>
+  <div class="body">
+    <div class="prod">
+      <img id="pimg" src="https://drive.google.com/thumbnail?id=1q5_bWbbxuuRvPVEYiPjjLpBCyrEMTyD6&sz=w800" alt="Alaabta">
+      <div><div class="nm" id="pname">Fast Charger 25W</div><span class="oid" id="poid">Order: TEST-1001</span></div>
+    </div>
+    <div class="amount"><div class="alb">Wadarta</div><div class="a2" id="amt">$8</div></div>
+    <div>
+      <div class="wlabel">Lambarka wallet-ka (SAHAL / EVC / ZAAD)</div>
+      <div class="wrow"><div class="pfx">252</div><input id="phone" inputmode="numeric" autocomplete="tel" placeholder="61 234 5678"></div>
+    </div>
+    <button class="paybtn" id="pay">Bixi $8 — WaafiPay</button>
+    <div class="msg" id="msg">Markaad BIXI taabato, codsi oggolaansho ayaa telefoonkaaga u dhici doona — PIN-kaaga ku oggolow.</div>
+  </div>
+  <div class="foot">TIJAABO (sandbox) — lacag dhab ah ma dhaqaaqdo · XALIS — Gaalkacyo</div>
+  <div class="lb" id="lb"><img id="lbimg" src="https://drive.google.com/thumbnail?id=1q5_bWbbxuuRvPVEYiPjjLpBCyrEMTyD6&sz=w1200" alt="Sawir weyn"></div>
+<script>
+  var API = 'https://script.google.com/macros/s/AKfycbyrBxiwZDAiBnvTS8dGJNldpUoSSJ2dPTS_2HSB4_j-oB0gtH8lpbj7oggX3ks_kmWt9A/exec';
+  var qs = new URLSearchParams(location.search);
+  var ORDER = qs.get('order') || 'TEST-1001';
+  var amount = 8;
+  document.getElementById('poid').textContent = 'Order: ' + ORDER;
+  var $ = function (id) { return document.getElementById(id); };
+  $('pimg').onclick = function () { $('lb').classList.add('open'); };
+  $('lb').onclick = function () { $('lb').classList.remove('open'); };
+
+  fetch(API + '?action=order&order=' + encodeURIComponent(ORDER))
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d && d.ok) {
+        amount = d.amount;
+        $('pname').textContent = d.name;
+        $('amt').textContent = '$' + (amount % 1 ? amount.toFixed(2) : amount);
+        $('pay').textContent = 'Bixi $' + (amount % 1 ? amount.toFixed(2) : amount) + ' — WaafiPay';
+        if (d.paid) setState('paid', 'Dalabkan waa la bixiyay', 'Mahadsanid — lacag-bixintu waa dhammaatay');
+      }
+    }).catch(function () { });
+
+  function setState(cls, t, s) {
+    var b = $('banner'); b.className = 'banner ' + cls; $('bt').textContent = t; $('bs').textContent = s;
+  }
+  $('pay').onclick = function () {
+    var raw = $('phone').value.replace(/[\s+]/g, '');
+    var phone = raw.indexOf('252') === 0 ? raw : ('252' + raw.replace(/^0/, ''));
+    var msg = $('msg'); msg.className = 'msg';
+    if (!/^252\d{9}$/.test(phone)) { msg.className = 'msg err'; msg.textContent = 'Lambarka sax maaha — geli 9 lambar (252 la\'aanteed) ama lambarka oo buuxa.'; return; }
+    var btn = $('pay'); btn.disabled = true; btn.textContent = 'Waa la dirayaa...';
+    setState('waiting', 'Sugaya oggolaanshahaaga...', 'Telefoonkaaga eeg — PIN-kaaga ku oggolow');
+    msg.textContent = 'Codsi ayaa u dhacay ' + phone + ' — oggolow, kadib sug.';
+    fetch(API + '?action=pay&order=' + encodeURIComponent(ORDER) + '&phone=' + encodeURIComponent(phone))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.status === 'paid') {
+          setState('paid', 'PAID ✓ — waa la bixiyay', 'Lacag-bixintu waa guulaysatay');
+          msg.textContent = 'Mahadsanid! Dalabkaagu waa PAID.' + (d.txn ? ' Transaction: ' + d.txn : '');
+          btn.textContent = 'Waa la bixiyay ✓';
+        } else {
+          setState('failed', 'Lacag-bixintu ma dhammaan', (d && d.msg) || 'Khalad dhacay');
+          msg.className = 'msg err'; msg.textContent = (d && d.msg) || 'Khalad — dib u tijaabi.';
+          btn.disabled = false; btn.textContent = 'Bixi $' + (amount % 1 ? amount.toFixed(2) : amount) + ' — WaafiPay';
+        }
+      })
+      .catch(function () {
+        setState('failed', 'Server-ka lama gaarin', 'Dib u tijaabi');
+        msg.className = 'msg err'; msg.textContent = 'Xiriirku wuu go\'ay — dib u tijaabi.';
+        btn.disabled = false; btn.textContent = 'Bixi $' + (amount % 1 ? amount.toFixed(2) : amount) + ' — WaafiPay';
+      });
+  };
+</script>
+</body>
+</html>
